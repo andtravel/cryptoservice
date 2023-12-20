@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Currency;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,6 +24,18 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $cryptos = Currency::all();
+
+        return view('home', compact('cryptos'));
+    }
+
+    public function choose(Request $request)
+    {
+        $currencies = array_keys($request->all(), 'on');
+
+        foreach ($currencies as $currency) {
+            auth()->user()->currencies()->attach($currency);
+        }
+        return back();
     }
 }
