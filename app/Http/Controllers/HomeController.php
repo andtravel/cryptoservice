@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Currency;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -24,19 +26,34 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $cryptos = Currency::all();
+        $currencies = auth()->user()->currencies()->get();
 
-        return view('home', compact('cryptos'));
+        foreach ($currencies as $currency) {
+            $amounts = DB::table('currency_history')->select('amount', 'created_at')->where('currency_id', $currency->id)->get();
+            $collection = collect($amounts);
+            $d = $collection->value($amounts);
+//            dd(Collection::unwrap($d));
+            dd($amounts);
+        }
+
+        return view('home');
     }
 
-    public function choose(Request $request)
+    public function choosePage()
+    {
+        $cryptos = Currency::all();
+
+        return view('choiceCrypto', compact('cryptos'));
+    }
+
+    public function chooseCrypto(Request $request)
     {
         $currencies = array_keys($request->all(), 'on');
 
         foreach ($currencies as $currency) {
             auth()->user()->currencies()->attach($currency);
         }
-        return redirect()->back();
+        return to_route('home');
     }
 
 }
