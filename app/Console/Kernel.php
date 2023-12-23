@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Services\ScheduleService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Http\Controllers\HomeController;
@@ -13,11 +14,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
-        $schedule->call(function () {
-            $home = new HomeController();
-            $home->test();
-        })->everyTenSeconds();
+        $service = new ScheduleService();
+
+        $schedule->call(fn () => $service->hourlyCron())->everyTenSeconds();
     }
 
     /**
