@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\ChartController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -21,8 +21,8 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/choice', [App\Http\Controllers\HomeController::class, 'choosePage'])->name('page');
-Route::post('/choice', [App\Http\Controllers\HomeController::class, 'chooseCrypto'])->name('cryptos');
-Route::get('/chart', [ChartController::class, 'index']);
-Route::get('/chart/data', [ChartController::class, 'chartData']);
+
+Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/choice', [HomeController::class, 'choosePage'])->name('page');
+Route::post('/choice', [HomeController::class, 'chooseCrypto'])->name('cryptos');
+Route::get('/chart/data', [HomeController::class, 'chartData'])->name('chartData');

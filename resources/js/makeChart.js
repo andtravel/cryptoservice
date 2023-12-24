@@ -3,20 +3,25 @@ import Chart from 'chart.js/auto';
 fetch('/chart/data')
     .then(response => response.json())
     .then(data => {
-        console.log(data);
-        const labels = [1,2,3,4,5,6,7,8,9,10,11,12]
-        const ctx = document.getElementById('myChart').getContext('2d');
-        const myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'График',
-                    data: data,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-            }
-        });
+        let count = 0
+        let key;
+        for (key in data) {
+            count++
+            const labels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+            const dataLine = {
+                label: key,
+                data: data[key],
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                fill: false
+            };
+            const ctx = document.getElementById(key).getContext('2d');
+            const chartKey = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [dataLine]
+                },
+            });
+        }
     });
