@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Currency;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
@@ -44,13 +43,12 @@ class HomeController extends Controller
                 ->get();
 
             $collection = $amounts->pluck('amount');
-            $dataCol = $collection->map(function ($item, $key) {
+            $dataCol = $collection->map(function ($item) {
                 return floatval($item);
             })->all();
 
             $data += [$currency->name => $dataCol];
         }
-
         return response()->json($data);
     }
 

@@ -12,7 +12,6 @@
                         @foreach ($chartKeys as $key)
                             <canvas id="{{ $key }}"></canvas>
                         @endforeach
-
                     </div>
                 </div>
             </div>
