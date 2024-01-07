@@ -2,19 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class ChartController extends Controller
 {
-    public object $home;
-
-    public function __construct(HomeController $home)
+    public function chartData(User $user)
     {
-        $this->home = $home;
-    }
+        $currencies = $user->currencies()->get();
+        $data = [];
+        foreach ($currencies as $currency) {
+            $amounts = DB::table('currency_history')
+                ->select('amount')
+                ->orderBy('created_at', 'desc')
+                ->limit(12)
+                ->where('currency_id', $currency->id)
+                ->get();
 
-    public function chartData()
-    {
-        return $this->home->chartData();
+            $dataCol = array_reverse($amounts->pluck('amount')->map(fn($item) => floatval($item))->all());
+            $data += [$currency->name => $dataCol];
+        }
+
+        return response()->json($data);
     }
 }

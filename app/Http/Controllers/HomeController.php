@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
+
     /**
      * Create a new controller instance.
      *
@@ -25,12 +26,29 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $chartKeys = array_keys(json_decode($this->transit(), JSON_OBJECT_AS_ARRAY));
 
-        return view('home', compact('chartKeys'));
+        $chartData = $this->chartData()->getOriginalContent();
+
+        return view('home', compact('chartData'));
     }
 
     public function chartData()
+    {
+        $user = auth()->guard()->user();
+
+        $chart = new ChartController();
+
+        return $chart->chartData($user);
+    }
+    public function choosePage()
+    {
+        $cryptos = Currency::all();
+
+        return view('choiceCrypto', compact('cryptos'));
+    }
+
+    public function chooseCrypto(Request $request)
+
     {
         $currencies = auth()->user()->currencies()->get();
 
@@ -49,29 +67,7 @@ class HomeController extends Controller
 
             $data += [$currency->name => $dataCol];
         }
-        return response()->json($data);
-    }
 
-    public function transit()
-    {
-        return $this->chartData()->content();
-    }
-
-    public function choosePage()
-    {
-        $cryptos = Currency::all();
-
-        return view('choiceCrypto', compact('cryptos'));
-    }
-
-    public function chooseCrypto(Request $request)
-    {
-        $currencies = array_keys($request->all(), 'on');
-
-        foreach ($currencies as $currency) {
-            auth()->user()->currencies()->attach($currency);
-        }
         return to_route('home');
     }
-
 }
