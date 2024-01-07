@@ -9,8 +9,15 @@
 
                     <div class="card-body">
                         <h1>Home</h1>
-                        @foreach ($chartKeys as $key)
-                            <canvas id="{{ $key }}"></canvas>
+                        @foreach($chartData as $key => $value)
+                            <div class="container m-auto">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h1>{{ $key }}</h1>
+                                        <canvas id="{{ $key }}"></canvas>
+                                    </div>
+                                </div>
+                            </div>
                         @endforeach
                     </div>
                 </div>

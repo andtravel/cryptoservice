@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\ChartController;
 use App\Models\Currency;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
+
     /**
      * Create a new controller instance.
      *
@@ -25,38 +28,19 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $chartKeys = array_keys(json_decode($this->transit(), JSON_OBJECT_AS_ARRAY));
+        $chartData = $this->chartData()->getOriginalContent();
 
-        return view('home', compact('chartKeys'));
+        return view('home', compact('chartData'));
     }
 
     public function chartData()
     {
-        $currencies = auth()->user()->currencies()->get();
+        $user = auth()->guard()->user();
 
-        $data = [];
-        foreach ($currencies as $currency) {
-            $amounts = DB::table('currency_history')
-                ->select('amount')
-                ->limit(24)
-                ->where('currency_id', $currency->id)
-                ->get();
+        $chart = new ChartController();
 
-            $collection = $amounts->pluck('amount');
-            $dataCol = $collection->map(function ($item) {
-                return floatval($item);
-            })->all();
-
-            $data += [$currency->name => $dataCol];
-        }
-        return response()->json($data);
+        return $chart->chartData($user);
     }
-
-    public function transit()
-    {
-        return $this->chartData()->content();
-    }
-
     public function choosePage()
     {
         $cryptos = Currency::all();
