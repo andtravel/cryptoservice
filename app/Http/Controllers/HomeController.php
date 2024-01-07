@@ -50,24 +50,11 @@ class HomeController extends Controller
     public function chooseCrypto(Request $request)
 
     {
-        $currencies = auth()->user()->currencies()->get();
+        $currencies = array_keys($request->all(), 'on');
 
-        $data = [];
         foreach ($currencies as $currency) {
-            $amounts = DB::table('currency_history')
-                ->select('amount')
-                ->limit(24)
-                ->where('currency_id', $currency->id)
-                ->get();
-
-            $collection = $amounts->pluck('amount');
-            $dataCol = $collection->map(function ($item) {
-                return floatval($item);
-            })->all();
-
-            $data += [$currency->name => $dataCol];
+            auth()->user()->currencies()->attach($currency);
         }
-
         return to_route('home');
     }
 }
