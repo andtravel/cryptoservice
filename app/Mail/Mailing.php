@@ -34,7 +34,7 @@ class Mailing extends Mailable
         return new Envelope(
 
             replyTo: [
-                new Address('anovts@gmail.com', 'Andrii Novikov')
+                new Address($this->user->email, "$this->user->first_name $this->user->last_name")
             ],
             subject: 'Mailing',
         );
